@@ -26,5 +26,5 @@ jobs:
       # CLI call to simulated upload process
       - name: Upload
         run: |
-          UPLOAD_TOKEN="dummyToken"
-          ./upload.sh Android build/android 
+          UploadToken="dummyToken"
+          ./upload.sh Android build/android --UPLOAD_TOKEN "${UploadToken}" 
