@@ -1,7 +1,6 @@
 name: Run Build
 env:
   UPLOAD_TOKEN: 'dummyToken'
-
 on:
   workflow_dispatch:
 
@@ -28,4 +27,5 @@ jobs:
       # CLI call to simulated upload process
       - name: Upload
         run: |
-          ./upload.sh android "build/Android/Test App.apk"
+          for file in build/Android/*; do
+            ./upload.sh android "$file"
