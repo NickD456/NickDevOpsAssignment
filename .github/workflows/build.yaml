@@ -3,6 +3,12 @@ env:
   UPLOAD_TOKEN: 'dummyToken'
 on:
   workflow_dispatch:
+    inputs:
+      customFileName:
+        description: 'Enter a custome name for the built APK'
+        type: string
+        default: 'TestApp'
+      
 
 jobs:
   build:
@@ -21,8 +27,7 @@ jobs:
       # CLI call to simulated build process
       - name: Run Build
         run: |
-          appName="Test App"
-          ./build.sh --platform Android --project-name "${appName}"
+          ./build.sh --platform Android --project-name "${{github.event.inputs.customFileName}}"
 
       # CLI call to simulated upload process
       - name: Upload
