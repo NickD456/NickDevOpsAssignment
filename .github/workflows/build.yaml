@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Make file executable
-        run:  chmod +x ./build.sh
+        run:  chmod +x build.sh
         
       # CLI call to simulated build process
       - name: Run Build
