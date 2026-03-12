@@ -27,6 +27,6 @@ jobs:
       # CLI call to simulated upload process
       - name: Upload
         run: |
-          for file in build/Android/*; do
+          for file in "build/Android/*"; do
             ./upload.sh android "$file"
           done
