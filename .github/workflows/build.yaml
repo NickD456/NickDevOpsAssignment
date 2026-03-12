@@ -13,6 +13,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+
+      - name: Make file executable
+        run:  chmod +x ./build.sh
         
       # CLI call to simulated build process
       - name: Run Build
