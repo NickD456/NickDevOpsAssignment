@@ -38,7 +38,7 @@ jobs:
 
       # CLI call to simulated upload process
       - name: Upload and version
-        if: github.ref == 'refs/heads/Test'
+        if: github.ref == 'refs/heads/Master'
         run: |
           git fetch --tags
           if git rev-parse --verify refs/tags >/dev/null 2>&1; then
