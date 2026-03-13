@@ -38,6 +38,7 @@ jobs:
       - name: Upload and version
         if: github.ref == 'refs/heads/Test'
         run: |
+          git fetch --tags
           if git rev-parse --verify refs/tags >/dev/null 2>&1; then
             LAST_TAG=$(git describe --tags --abbrev=0)
           else
