@@ -49,16 +49,28 @@ jobs:
             echo "Must have a file name"
             exit 1
           fi
-          if [[ "${{ matrix.buildPlatform }}" == "Android" && "${{ github.event.inputs.buildPlatformAndroid }}" != "true" ]] || [[ "${{ matrix.buildPlatform }}" == "iOS" && "${{ github.event.inputs.buildPlatformIOS }}" != "true" ]]; then
-            echo "Skipping ${{ matrix.buildPlatform }} build"
-            exit 78
+      - name: Determine if build should run
+        id: check_platform
+        run: |
+          SKIP=false
+          if [[ "${{ matrix.buildPlatform }}" == "Android" && "${{ github.event.inputs.buildPlatformAndroid }}" != "true" ]]; then
+            SKIP=true
           fi
+          if [[ "${{ matrix.buildPlatform }}" == "iOS" && "${{ github.event.inputs.buildPlatformIOS }}" != "true" ]]; then
+            SKIP=true
+          fi
+          echo "SKIP_BUILD=$SKIP" >> $GITHUB_ENV
 
       - name: Make file executable
+        if: env.SKIP_BUILD != 'true'
         run:  chmod +x build.sh upload.sh
       
       - name: Version tagging
-        if: github.ref == 'refs/heads/main'
+          if [[ "${{ matrix.buildPlatform }}" == "Android" && "${{ github.event.inputs.buildPlatformAndroid }}" != "true" ]] || [[ "${{ matrix.buildPlatform }}" == "iOS" && "${{ github.event.inputs.buildPlatformIOS }}" != "true" ]]; then
+            echo "Skipping ${{ matrix.buildPlatform }} build"
+            exit 0
+          fi
+        if: github.ref == 'refs/heads/main' && env.SKIP_BUILD != 'true'
         id: auto_version
         run: |
           Version="v${GITHUB_RUN_NUMBER}-${{ matrix.buildPlatform }}"
@@ -67,16 +79,20 @@ jobs:
         
       
       - name: Start timer
+        if: env.SKIP_BUILD != 'true'
+        
         id: timer_start
         run: echo "start=$(date +%s)" >> $GITHUB_OUTPUT
 
       # CLI call to simulated build process
       - name: Run Build
+        if: env.SKIP_BUILD != 'true'
         run: |
           Version="${{ steps.auto_version.outputs.new_tag || 'dev' }}"
           ./build.sh --platform "${{ matrix.buildPlatform }}" --project-name "${{github.event.inputs.customFileName}}" --profile --version "$Version"
 
       - name: Stop timer
+        if: env.SKIP_BUILD != 'true'
         id: timer_end
         run: |
           end=$(date +%s)
@@ -84,6 +100,7 @@ jobs:
           echo "Build for "${{ matrix.buildPlatform }}" took ${duration} seconds"
       
       - name: Upload profiling artifacts
+        if: env.SKIP_BUILD != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: build-profiles-for-${{ matrix.buildPlatform }}
@@ -92,7 +109,7 @@ jobs:
       # CLI call to simulated upload process
           
       - name: Upload
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' && env.SKIP_BUILD != 'true'
         run: |
           UploadPlatform=$(echo "${{ matrix.buildPlatform }}" | tr '[:upper:]' '[:lower:]')
 
