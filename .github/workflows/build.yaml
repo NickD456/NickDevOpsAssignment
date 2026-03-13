@@ -31,7 +31,7 @@ jobs:
     steps:
       - name: Input validation
         run: |
-          if: ${{github.event.inputs.buildPlatformAndroid}} == false && ${{github.event.inputs.buildPlatformIOS}} == false
+          if: ${{github.event.inputs.buildPlatformAndroid}} == 'false' && ${{github.event.inputs.buildPlatformIOS}} == 'false'
             echo "Must select a build platform"
             exit 1
           
