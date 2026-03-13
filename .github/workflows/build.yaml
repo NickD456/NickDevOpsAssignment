@@ -55,9 +55,9 @@ jobs:
             Minor=$((Minor + 1))
           fi
 
-          Version="v${Major}.${Minor}"
-          echo "Version=$VERSION" >> $GITHUB_ENV
-          echo "Determined version: Version"
+          VERSION="v${Major}.${Minor}"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "Determined version: $VERSION"
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
