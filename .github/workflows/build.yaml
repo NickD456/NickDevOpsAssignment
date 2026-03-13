@@ -64,7 +64,8 @@ jobs:
       - name: Make file executable
         if: env.SKIP_BUILD != 'true'
         run:  chmod +x build.sh upload.sh
-      
+
+      # Partly AI assisted to ensure matrix compatibility 
       - name: Version tagging
           if [[ "${{ matrix.buildPlatform }}" == "Android" && "${{ github.event.inputs.buildPlatformAndroid }}" != "true" ]] || [[ "${{ matrix.buildPlatform }}" == "iOS" && "${{ github.event.inputs.buildPlatformIOS }}" != "true" ]]; then
             echo "Skipping ${{ matrix.buildPlatform }} build"
