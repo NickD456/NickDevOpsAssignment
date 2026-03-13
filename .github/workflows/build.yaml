@@ -38,36 +38,17 @@ jobs:
           ./build.sh --platform Android --project-name "${{github.event.inputs.customFileName}}"
 
       # CLI call to simulated upload process
-      - name: Upload and version
-        if: github.ref == 'refs/heads/main'
-        run: |
-          git fetch --tags
-          LAST_TAG=$(git tag --sort=-creatordate | head -n1)
-          if [ -z "$LAST_TAG" ]; then
-            LAST_TAG="v0.0"
-          fi
+      - name: Version tagging
+        uses: anothrNick/github-tag-action@1.67.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: true
+          INCREMENT: ${{ github.event.inputs.majorRelease == 'true' && 'major' || 'minor' }}
           
-          Major=$(echo $LAST_TAG | cut -d. -f1 | tr -d v)
-          Minor=$(echo $LAST_TAG | cut -d. -f2)
-
-          if [ "${{ github.event.inputs.majorRelease }}" == "true" ]; then
-            Major=$((Major + 1))
-            Minor=0
-          else
-            Minor=$((Minor + 1))
-          fi
-
-          VERSION="v${Major}.${Minor}"
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "Determined version: $VERSION"
-
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag "$VERSION"
-          git push origin "$VERSION"
-
+      - name: Rename APK and upload
+        run: |
           APK_PATH="build/Android/${{ github.event.inputs.customFileName }}.apk"
-          mv "$APK_PATH" "build/Android/${{ github.event.inputs.customFileName }}-${VERSION}.apk"
+          mv "$APK_PATH" "build/Android/${{ github.event.inputs.customFileName }}-${{ steps.auto_version.outputs.new_tag }}.apk"
     
           for file in build/Android/*; do
             ./upload.sh android "$file"
