@@ -39,6 +39,7 @@ jobs:
 
       # CLI call to simulated upload process
       - name: Version tagging
+        if: github.ref == 'refs/heads/main'
         uses: anothrNick/github-tag-action@1.67.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -46,6 +47,7 @@ jobs:
           INCREMENT: ${{ github.event.inputs.majorRelease == 'true' && 'major' || 'minor' }}
           
       - name: Rename APK and upload
+        if: github.ref == 'refs/heads/main'
         run: |
           APK_PATH="build/Android/${{ github.event.inputs.customFileName }}.apk"
           mv "$APK_PATH" "build/Android/${{ github.event.inputs.customFileName }}-${{ steps.auto_version.outputs.new_tag }}.apk"
