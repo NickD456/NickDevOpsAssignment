@@ -34,14 +34,24 @@ jobs:
         run: |
           ./build.sh --platform Android --project-name "${{github.event.inputs.customFileName}}"
 
+      - name: Increment type
+        if: github.ref == 'refs/heads/main'
+        id: bump
+        run: |
+          if [ "${{ github.event.inputs.majorRelease }}" == "true" ]; then
+            echo "increment=major" >> $GITHUB_ENV
+          else
+            echo "increment=minor" >> $GITHUB_ENV
+
       # CLI call to simulated upload process
       - name: Version tagging
         if: github.ref == 'refs/heads/main'
+        id: auto_version
         uses: anothrNick/github-tag-action@1.67.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
-          INCREMENT: ${{ github.event.inputs.majorRelease == 'true' && 'major' || 'minor' }}
+          INCREMENT: ${{ env.increment }}
           
       - name: Rename APK and upload
         if: github.ref == 'refs/heads/main'
