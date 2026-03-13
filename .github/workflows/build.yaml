@@ -8,6 +8,16 @@ on:
         description: 'Enter a custome name for the built APK'
         type: string
         default: 'TestApp'
+      buildPlatformAndroid:
+        description: 'Build to Android?'
+        type: boolean
+        required: true
+        defualt: false
+      buildPlatformIOS:
+        description: 'Build to IOS?'
+        type: boolean
+        required: true
+        defualt: false
 
       
 
