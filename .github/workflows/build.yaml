@@ -29,6 +29,11 @@ jobs:
         working-directory: ./cli
 
     steps:
+      - name: Platform validation
+        run: |
+          if
+          
+
       - name: Checkout repository
         uses: actions/checkout@v2
 
