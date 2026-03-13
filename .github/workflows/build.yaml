@@ -29,15 +29,16 @@ jobs:
         working-directory: ./cli
 
     steps:
+          
+
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      
       - name: Input validation
         run: |
           if: ${{github.event.inputs.buildPlatformAndroid}} == 'false' && ${{github.event.inputs.buildPlatformIOS}} == 'false'
             echo "Must select a build platform"
             exit 1
-          
-
-      - name: Checkout repository
-        uses: actions/checkout@v2
 
       - name: Make file executable
         run:  chmod +x build.sh upload.sh
