@@ -36,9 +36,10 @@ jobs:
       
       - name: Input validation
         run: |
-          if: ${{github.event.inputs.buildPlatformAndroid}} == 'false' && ${{github.event.inputs.buildPlatformIOS}} == 'false'
+          if [[ "${{ github.event.inputs.buildPlatformAndroid }}" == "false" && "${{ github.event.inputs.buildPlatformIOS }}" == "false" ]]; then
             echo "Must select a build platform"
             exit 1
+          fi
 
       - name: Make file executable
         run:  chmod +x build.sh upload.sh
