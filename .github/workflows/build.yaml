@@ -31,6 +31,7 @@ jobs:
 
       # CLI call to simulated upload process
       - name: Upload
+        if: github.refs == 'refs/heads/master'
         run: |
           for file in build/Android/*; do
             ./upload.sh android "$file"
