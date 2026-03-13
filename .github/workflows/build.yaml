@@ -24,10 +24,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        buildPlatform: [Android, IOS]
+      
     defaults:
       run:
         working-directory: ./cli
-
+          
     steps:
           
 
@@ -44,33 +49,14 @@ jobs:
             echo "Must have a file name"
             exit 1
           fi
+          if [[ "${{ matrix.buildPlatform }}" == "Android" && "${{ github.event.inputs.buildPlatformAndroid }}" != "true" ]] || [[ "${{ matrix.buildPlatform }}" == "iOS" && "${{ github.event.inputs.buildPlatformIOS }}" != "true" ]]; then
+            echo "Skipping ${{ matrix.buildPlatform }} build"
+            exit 1
+          fi
 
       - name: Make file executable
         run:  chmod +x build.sh upload.sh
       
-      - name: Start timer
-        id: timer_start
-        run: echo "start=$(date +%s)" >> $GITHUB_OUTPUT
-        
-      # CLI call to simulated build process
-      - name: Run Build
-        run: |
-          ./build.sh --platform Android --project-name "${{github.event.inputs.customFileName}}" --profile
-
-      - name: Stop timer
-        id: timer_end
-        run: |
-          end=$(date +%s)
-          duration=$((end - ${{ steps.timer_start.outputs.start }}))
-          echo "Build took ${duration} seconds"
-      
-      - name: Upload profiling artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-profiles
-          path: cli/build/Android/*.pro
-
-      # CLI call to simulated upload process
       - name: Version tagging
         if: github.ref == 'refs/heads/main'
         id: auto_version
@@ -78,13 +64,35 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
+      
+      - name: Start timer
+        id: timer_start
+        run: echo "start=$(date +%s)" >> $GITHUB_OUTPUT
+
+      # CLI call to simulated build process
+      - name: Run Build
+        run: |
+          Version="${{ steps.auto_version.outputs.new_tag || 'dev' }}"
+          ./build.sh --platform "${{ matrix.buildPlatform }}" --project-name "${{github.event.inputs.customFileName}}" --profile --version "$Version"
+
+      - name: Stop timer
+        id: timer_end
+        run: |
+          end=$(date +%s)
+          duration=$((end - ${{ steps.timer_start.outputs.start }}))
+          echo "Build for "${{ matrix.buildPlatform }}" took ${duration} seconds"
+      
+      - name: Upload profiling artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-profiles for "${{ matrix.buildPlatform }}"
+          path: cli/build/"${{ matrix.buildPlatform }}"/*.pro
+
+      # CLI call to simulated upload process
           
-      - name: Rename APK and upload
+      - name: Upload
         if: github.ref == 'refs/heads/main'
         run: |
-          APK_PATH="build/Android/${{ github.event.inputs.customFileName }}.apk"
-          mv "$APK_PATH" "build/Android/${{ github.event.inputs.customFileName }}-${{ steps.auto_version.outputs.new_tag }}.apk"
-    
-          for file in build/Android/*; do
-            ./upload.sh android "$file"
+          for file in build/${{ matrix.buildPlatform }}/*; do
+            ./upload.sh ${{ matrix.buildPlatform }} "$file"
           done
