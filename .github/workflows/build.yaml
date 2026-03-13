@@ -36,7 +36,7 @@ jobs:
 
       # CLI call to simulated upload process
       - name: Upload and version
-        if: github.ref == 'refs/heads/Master'
+        if: github.ref == 'refs/heads/Test'
         run: |
           LastTag =$(git describe --tags --abbrev=0 || echo "v0.0")
           Major=$(echo $LastTag | cut -d. -f1 | tr -d v)
