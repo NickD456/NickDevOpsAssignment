@@ -40,7 +40,7 @@ jobs:
             echo "Must select a build platform"
             exit 1
           fi
-          if [[ "${{ github.event.inputs.customFileName }}" == ""]]; then
+          if [[ "${{ github.event.inputs.customFileName }}" == "" ]]; then
             echo "Must have a file name"
             exit 1
           fi
