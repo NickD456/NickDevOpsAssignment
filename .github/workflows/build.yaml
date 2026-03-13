@@ -102,6 +102,6 @@ jobs:
             UPLOAD_DIR="build/Android"
           fi
 
-          for file in build/${{ matrix.buildPlatform }}/*; do
+          for file in "$UPLOAD_DIR"/*; do
             ./upload.sh $UploadPlatform "$file"
           done
