@@ -45,7 +45,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-profiles
-          path: build/*.pro
+          path: cli/build/Android/*.pro
 
       # CLI call to simulated upload process
       - name: Version tagging
