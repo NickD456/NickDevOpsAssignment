@@ -9,10 +9,6 @@ on:
         type: string
         default: 'TestApp'
 
-      majorRelease:
-        description: 'Is this a major release?'
-        type: boolean
-        default: false
       
 
 jobs:
@@ -34,17 +30,6 @@ jobs:
         run: |
           ./build.sh --platform Android --project-name "${{github.event.inputs.customFileName}}"
 
-      - name: Increment type
-        if: github.ref == 'refs/heads/main'
-        id: bump
-        run: |
-          if [ "${{ github.event.inputs.majorRelease }}" == "true" ]; then
-            echo "increment=major" >> $GITHUB_ENV
-          else
-            echo "increment=minor" >> $GITHUB_ENV
-          fi
-      
-
       # CLI call to simulated upload process
       - name: Version tagging
         if: github.ref == 'refs/heads/main'
@@ -53,7 +38,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
-          INCREMENT: ${{ env.increment }}
           
       - name: Rename APK and upload
         if: github.ref == 'refs/heads/main'
