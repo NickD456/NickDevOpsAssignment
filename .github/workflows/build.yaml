@@ -32,6 +32,8 @@ jobs:
     defaults:
       run:
         working-directory: ./cli
+
+      if: (matrix.buildPlatform == 'Android' && github.event.inputs.buildPlatformAndroid == 'true') || (matrix.buildPlatform == 'iOS' && github.event.inputs.buildPlatformIOS == 'true')
           
     steps:
           
