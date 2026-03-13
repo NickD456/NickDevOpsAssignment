@@ -86,7 +86,7 @@ jobs:
       - name: Upload profiling artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: build-profiles for "${{ matrix.buildPlatform }}"
+          name: build-profiles-for-${{ matrix.buildPlatform }}
           path: cli/build/${{ matrix.buildPlatform }}/*.pro
 
       # CLI call to simulated upload process
