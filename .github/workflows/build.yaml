@@ -8,6 +8,11 @@ on:
         description: 'Enter a custome name for the built APK'
         type: string
         default: 'TestApp'
+
+      majorRelease:
+        description: 'Is this a major release?'
+        type: boolean
+        default: false
       
 
 jobs:
@@ -30,9 +35,29 @@ jobs:
           ./build.sh --platform Android --project-name "${{github.event.inputs.customFileName}}"
 
       # CLI call to simulated upload process
-      - name: Upload
+      - name: Upload and version
         if: github.ref == 'refs/heads/Master'
         run: |
+          LastTag =$(git describe --tags --abbrev=0 || echo "v0.0")
+          Major=$(echo $LastTag | cut -d. -f1 | tr -d v)
+          Minor=$(echo $LastTag | cut -d. -f2)
+
+          if [ "${{ github.event.inputs.majorRelease }}" == "true" ]; then
+            Major=$((Major + 1))
+            Minor=0
+          else
+            Minor=$((Minor + 1))
+          fi
+
+          Version="v${Major}.${Minor}"
+          echo "Version=$VERSION" >> $GITHUB_ENV
+          echo "Determined version: Version"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag "$VERSION"
+          git push origin "$VERSION"
+          
           for file in build/Android/*; do
             ./upload.sh android "$file"
           done
