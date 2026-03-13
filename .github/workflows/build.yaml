@@ -39,8 +39,8 @@ jobs:
         if: github.ref == 'refs/heads/Test'
         run: |
           LastTag =$(git describe --tags --abbrev=0 || echo "v0.0")
-          Major=$(echo $LastTag | cut -d. -f1 | tr -d v)
-          Minor=$(echo $LastTag | cut -d. -f2)
+          Major=$(echo $LAST_TAG | cut -d. -f1 | tr -d v)
+          Minor=$(echo $LAST_TAG | cut -d. -f2)
 
           if [ "${{ github.event.inputs.majorRelease }}" == "true" ]; then
             Major=$((Major + 1))
