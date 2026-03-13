@@ -28,7 +28,13 @@ jobs:
       # CLI call to simulated build process
       - name: Run Build
         run: |
-          ./build.sh --platform Android --project-name "${{github.event.inputs.customFileName}}"
+          ./build.sh --platform Android --project-name "${{github.event.inputs.customFileName}}" --profile
+      
+      - name: Upload profiling artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-profiles
+          path: build/Android/*.pro
 
       # CLI call to simulated upload process
       - name: Version tagging
