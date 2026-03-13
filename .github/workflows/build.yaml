@@ -60,12 +60,11 @@ jobs:
       - name: Version tagging
         if: github.ref == 'refs/heads/main'
         id: auto_version
-        uses: anothrNick/github-tag-action@1.67.0
-        with:
-          CUSTOM_TAG: "v${{ github.run_number }}-${{ matrix.buildPlatform }}"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          WITH_V: true
+        run: |
+          Version="v${GITHUB_RUN_NUMBER}-${{ matrix.buildPlatform }}"
+          echo "Platform-specific version: $Version"
+          echo "new_tag=$Version" >> $GITHUB_OUTPUT
+        
       
       - name: Start timer
         id: timer_start
