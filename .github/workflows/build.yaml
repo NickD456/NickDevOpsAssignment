@@ -93,6 +93,7 @@ jobs:
       - name: Upload
         if: github.ref == 'refs/heads/main'
         run: |
+          UploadPlatform=$(echo "${{ matrix.buildPlatform }}" | tr '[:upper:]' '[:lower:]')
           for file in build/${{ matrix.buildPlatform }}/*; do
-            ./upload.sh ${{ matrix.buildPlatform }} "$file"
+            ./upload.sh $UploadPlatform "$file"
           done
