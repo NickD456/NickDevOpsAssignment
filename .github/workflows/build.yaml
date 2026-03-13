@@ -94,6 +94,13 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
           UploadPlatform=$(echo "${{ matrix.buildPlatform }}" | tr '[:upper:]' '[:lower:]')
+
+          if [[ "${{ matrix.buildPlatform }}" == "iOS" ]]; then
+            UPLOAD_DIR="build/iOS/Assets"
+          else
+            UPLOAD_DIR="build/Android"
+          fi
+
           for file in build/${{ matrix.buildPlatform }}/*; do
             ./upload.sh $UploadPlatform "$file"
           done
