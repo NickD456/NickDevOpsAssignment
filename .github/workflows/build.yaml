@@ -38,7 +38,7 @@ jobs:
       - name: Upload and version
         if: github.ref == 'refs/heads/Test'
         run: |
-          LAST_TAG =$(git describe --tags --abbrev=0 || echo "v0.0")
+          LAST_TAG=$(git describe --tags --abbrev=0 || echo "v0.0")
           Major=$(echo $LAST_TAG | cut -d. -f1 | tr -d v)
           Minor=$(echo $LAST_TAG | cut -d. -f2)
 
