@@ -24,11 +24,22 @@ jobs:
 
       - name: Make file executable
         run:  chmod +x build.sh upload.sh
+      
+      - name: Start timer
+        id: timer_start
+        run: echo "start=$(date +%s)" >> $GITHUB_OUTPUT
         
       # CLI call to simulated build process
       - name: Run Build
         run: |
           ./build.sh --platform Android --project-name "${{github.event.inputs.customFileName}}" --profile
+
+      - name: Stop timer
+        id: timer_end
+        run: |
+          end=$(date +%s)
+          duration=$((end - ${{ steps.timer_start.outputs.start }}))
+          echo "Build took ${duration} seconds"
       
       - name: Upload profiling artifacts
         uses: actions/upload-artifact@v4
