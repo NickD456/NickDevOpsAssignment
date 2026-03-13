@@ -25,9 +25,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-          tags: true 
 
       - name: Make file executable
         run:  chmod +x build.sh upload.sh
