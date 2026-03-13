@@ -38,7 +38,13 @@ jobs:
       - name: Upload and version
         if: github.ref == 'refs/heads/Test'
         run: |
-          LAST_TAG=$(git describe --tags --abbrev=0 || echo "v0.0")
+          if git rev-parse --verify refs/tags >/dev/null 2>&1; then
+            LAST_TAG=$(git describe --tags --abbrev=0)
+          else
+            LAST_TAG="v0.0"
+          fi
+          echo "Last tag: $LAST_TAG"
+          
           Major=$(echo $LAST_TAG | cut -d. -f1 | tr -d v)
           Minor=$(echo $LAST_TAG | cut -d. -f2)
 
