@@ -28,7 +28,6 @@ jobs:
     strategy:
       matrix:
         buildPlatform: [Android, iOS]
-      
     defaults:
       run:
         working-directory: ./cli
@@ -52,7 +51,7 @@ jobs:
           fi
           if [[ "${{ matrix.buildPlatform }}" == "Android" && "${{ github.event.inputs.buildPlatformAndroid }}" != "true" ]] || [[ "${{ matrix.buildPlatform }}" == "iOS" && "${{ github.event.inputs.buildPlatformIOS }}" != "true" ]]; then
             echo "Skipping ${{ matrix.buildPlatform }} build"
-            exit 0
+            exit 78
           fi
 
       - name: Make file executable
